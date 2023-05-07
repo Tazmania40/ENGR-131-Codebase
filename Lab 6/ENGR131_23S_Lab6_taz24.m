@@ -113,12 +113,50 @@ disp("Mean time for Manual: " + mean(times(:, 1)))
 disp("Mean time for MatLab: " + mean(times(:, 1)))
 
 %% Question 4
+clf
 % Load datafile
 load('ENGR131_23S_Lab06_TrialData.mat')
+% Loop
+for col = 2:size(TrialData, 2)
+    % Subtract out mean from each datapoint and
+    TrialData{2, col} = abs(TrialData{2, col} - ...
+        mean(TrialData{2, col}));
+    % Create a time vector based on the length of the condition data and
+    % sampling rate
+    TrialData{3, col} = ...
+        0:1/TrialData{3, 1}:(length(TrialData{2, col})-1)*1/TrialData{3, 1};
+    % Compute area under the curve for each condition and save it to the
+    % 4th row cell using the trapezoidal rule
+    TrialData{4, col} = trapz(TrialData{2, col});
+    % Set the line color
+    switch col
+        case 2
+            TrialData{5, col} = "r";
+        case 3 
+            TrialData{5, col} = "g";
+        case 4 
+            TrialData{5, col} = "b";
+    end
+    % Plot each condition on a seperate subplot
+    subplot(3, 1, col-1)
+    % Using only the TrialData table
+    plot(TrialData{3, col}, TrialData{2, col}, TrialData{5, col})
+    % Set y-limit to maximum value
+    ylim([0, max(TrialData{2, col})])
+    % Set y-label using the text in the first row
+    ylabel(TrialData{1, col})
+end
+% Set the X label of the bottom plot to time
+xlabel("Time")
 
+% Specify top plot and give it its title
+subplot(3,1,1)
+title("Deltoid Activity by Condition")
 
-
-
+% Report areas found in B.c
+disp("Area for " + TrialData{1, 2} + " is " + TrialData{4, 2})
+disp("Area for " + TrialData{1, 3} + " is " + TrialData{4, 3})
+disp("Area for " + TrialData{1, 4} + " is " + TrialData{4, 4})
 
 
 %% Function(s) Question 3
